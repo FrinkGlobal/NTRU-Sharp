@@ -1,13 +1,12 @@
 using System;
 using System.Runtime.InteropServices;
-using NTRU.ffi;
 using NTRU.Params;
 
 namespace NTRU.types
 {
     public static class types
     {
-        public const uint MAX_DEGREE = (1499 +1);
+        public const uint MAX_DEGREE = (1499 + 1);
 
         const uint INT_POLOY_SIZE = ((MAX_DEGREE + 16 +7) & 0xFFF8);
 
@@ -35,11 +34,12 @@ namespace NTRU.types
 
             public void set_coeff(uint index, short value) { coeffs[index] = value; }
 
-            public void mod_mask(ushort mod_mask) { }
+            public void mod_mask(ushort mod_mask) {
+                
+             }
 
             //public byte[] to_arr_32()
         }
     }
    
-
 }
