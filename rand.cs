@@ -4,16 +4,16 @@ using System.Runtime.InteropServices;
 namespace NTRU.rand
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct RandomContext {
-        public ffi.CNtruRandomContext rand_ctx;
+    public struct RandContext {
+        public ffi.CNtruRandContext rand_ctx;
 
 
-        public RandomContext (ffi.CNtruRandomContext rand_ctx) {
+        public RandContext (ffi.CNtruRandContext rand_ctx) {
             this.rand_ctx = rand_ctx;
         }
 
-        public static RandomContext Default() {
-            return new RandomContext(new ffi.CNtruRandomContext(
+        public static RandContext Default() {
+            return new RandContext(new ffi.CNtruRandContext(
                 rand.RNG_DEFAULT,
                 IntPtr.Zero,
                 0,
@@ -21,7 +21,7 @@ namespace NTRU.rand
             ));  
         }
 
-        public ffi.CNtruRandomContext get_c_rand_ctx() {
+        public ffi.CNtruRandContext get_c_rand_ctx() {
             return rand_ctx;
         }
 
@@ -70,8 +70,8 @@ namespace NTRU.rand
             this.release_fn = release_fn;
         }
 
-        public RandomContext init(RandGen rand_gen) {
-            RandomContext rand_ctx = RandomContext.Default();
+        public RandContext init(RandGen rand_gen) {
+            RandContext rand_ctx = RandContext.Default();
             IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx));
             IntPtr rand_gen_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_gen));
             Marshal.StructureToPtr(rand_ctx, rand_ctx_ptr, false);
@@ -86,7 +86,7 @@ namespace NTRU.rand
             return rand_ctx;
         }
 
-        public byte[] generate(ushort length, RandomContext rand_ctx) {
+        public byte[] generate(ushort length, RandContext rand_ctx) {
             byte[] plain = new byte[length];
             IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.rand_ctx));
             Marshal.StructureToPtr(rand_ctx.rand_ctx, rand_ctx_ptr, false);
@@ -117,8 +117,8 @@ namespace NTRU.rand
         );
 
 
-        public static RandomContext init (RandGen rand_gen) {
-            RandomContext rand_ctx = RandomContext.Default();
+        public static RandContext init (RandGen rand_gen) {
+            RandContext rand_ctx = RandContext.Default();
             IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.rand_ctx));
             Marshal.StructureToPtr(rand_ctx, rand_ctx_ptr, false);
             IntPtr rand_gen_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_gen));
@@ -130,6 +130,38 @@ namespace NTRU.rand
             Marshal.FreeHGlobal(rand_gen_ptr);
             Marshal.FreeHGlobal(rand_ctx_ptr);
             return rand_ctx;
+        }
+
+        public static RandContext init_det (RandGen rand_gen, byte[] seed) {
+            RandContext rand_ctx = RandContext.Default();
+            IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.rand_ctx));
+            Marshal.StructureToPtr(rand_ctx, rand_ctx_ptr, false);
+            IntPtr rand_gen_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_gen));
+            Marshal.StructureToPtr(rand_gen, rand_ctx_ptr, false);
+            IntPtr seed_ptr = Marshal.AllocHGlobal(seed.Length);
+            Marshal.Copy(seed, 0, seed_ptr, seed.Length);
+            var result = ffi.ntru_rand_init_det (rand_ctx_ptr, rand_gen_ptr, seed_ptr, (ushort)seed.Length);
+            if (result == 0)
+                Console.WriteLine("Error: Failed to Initialize Deterministic RandomContext");
+            Marshal.PtrToStructure(rand_ctx_ptr, rand_ctx);
+            Marshal.FreeHGlobal(rand_ctx_ptr);
+            Marshal.FreeHGlobal(rand_gen_ptr);
+            Marshal.FreeHGlobal(seed_ptr);
+            return rand_ctx;
+        }
+
+        public static byte[] generate (ushort length, RandContext rand_ctx) {
+            byte[] plain = new byte[length];
+            IntPtr plain_ptr = Marshal.AllocHGlobal(length);
+            IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.rand_ctx));
+            Marshal.StructureToPtr(rand_ctx.rand_ctx, rand_ctx_ptr, false);
+            var result = ffi.ntru_rand_generate(plain_ptr, length, rand_ctx_ptr);
+            if (result == 0)
+                Console.WriteLine("Error: Failed to Generate Random Data");
+            Marshal.Copy(plain_ptr, plain, 0, length);
+            Marshal.FreeHGlobal(plain_ptr);
+            Marshal.FreeHGlobal(rand_ctx_ptr);
+            return plain;
         }
 
     }

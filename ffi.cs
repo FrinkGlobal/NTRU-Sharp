@@ -7,7 +7,7 @@ namespace NTRU
     public static class ffi
     {
         [StructLayout(LayoutKind.Sequential)]
-        public struct CNtruRandomContext {
+        public struct CNtruRandContext {
             public IntPtr rand_gen;
 
             public IntPtr seed;
@@ -16,14 +16,14 @@ namespace NTRU
 
             public IntPtr state;
 
-            public CNtruRandomContext (IntPtr rand_gen, IntPtr seed, ushort seed_len, IntPtr state) {
+            public CNtruRandContext (IntPtr rand_gen, IntPtr seed, ushort seed_len, IntPtr state) {
                 this.rand_gen = rand_gen;
                 this.seed = seed;
                 this.seed_len = seed_len;
                 this.state = state;
             }
 
-            public CNtruRandomContext (RandGen rand_gen, IntPtr seed, ushort seed_len, IntPtr state) {
+            public CNtruRandContext (RandGen rand_gen, IntPtr seed, ushort seed_len, IntPtr state) {
                 IntPtr rand_gen_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_gen));
                 Marshal.StructureToPtr(rand_gen, rand_gen_ptr, false);
                 this.rand_gen = rand_gen_ptr;
