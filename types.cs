@@ -170,12 +170,24 @@ namespace NTRU.types
                 this.neg_ones = neg_ones;
             }
 
+            public TernPoly (ushort n, ushort[] ones, ushort[] neg_ones) {
+                this.n = n;
+                this.num_ones = (ushort)ones.Length;
+                this.num_neg_ones = (ushort)neg_ones.Length;
+                this.ones = ones;
+                this.neg_ones = neg_ones;
+            }
+
             public TernPoly clone() {
                 ushort[] new_ones = new ushort[types.MAX_ONES];
                 ushort[] new_neg_ones = new ushort[types.MAX_ONES];
                 new_ones = this.ones;
                 new_neg_ones = this.neg_ones;
-                return new TernPoly(this.n, this.num_ones, this.num_neg_ones, new_ones, new_neg_ones);
+                return new TernPoly(this.n, new_ones, new_neg_ones);
+            }
+
+            public static TernPoly Default() {
+                return new TernPoly (0, 0, 0, new ushort[types.MAX_ONES], new ushort[types.MAX_ONES]);
             }
 
             public ushort get_n() {
@@ -190,9 +202,48 @@ namespace NTRU.types
                 return this.neg_ones;
             }
 
-            // public IntPoly to_int_poly() {
+            public IntPoly to_int_poly() {
 
-            // }
+                short[] coeffs = new short[types.INT_POLY_SIZE];
+
+                for (int i = 0; i < this.num_ones; i++) {
+                    coeffs[this.ones[i]] = 1;
+                }
+
+                 for (int i = 0; i < this.num_neg_ones; i++) {
+                    coeffs[this.neg_ones[i]] = 1;
+                }
+                
+                return new IntPoly(this.n, coeffs);
+            }
+
         }
-   
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct ProdPoly {
+            [MarshalAs(UnmanagedType.U2)]
+            ushort n;
+
+            TernPoly f1;
+
+            TernPoly f2;
+
+            TernPoly f3;
+
+            public ProdPoly (ushort n, TernPoly f1, TernPoly f2, TernPoly f3) {
+                this.n = n;
+                this.f1 = f1;
+                this.f2 = f2;
+                this.f3 = f3;
+            }
+
+            public static ProdPoly Default() {
+                return new ProdPoly (0, TernPoly.Default(), TernPoly.Default(), TernPoly.Default());
+            }
+
+
+
+
+        }
+
 }

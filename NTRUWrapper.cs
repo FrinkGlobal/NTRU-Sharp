@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using NTRU.ffi;
 using NTRU.Params;
 using NTRU.rand;
 using NTRU.types;
