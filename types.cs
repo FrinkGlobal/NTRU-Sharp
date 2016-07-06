@@ -86,7 +86,7 @@ namespace NTRU.types
                 IntPtr this_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(this));
                 Marshal.StructureToPtr(this, this_ptr, false);
                 byte[] a = new byte[param.enc_len()];
-                IntPtr a_byte = new IntPtr(a[0]);
+                IntPtr a_byte = Marshal.AllocHGlobal(param.enc_len());
                 ffi.ntru_to_arr_32(this_ptr, param.get_q(), a_byte);
                 Marshal.Copy(a_byte, a, 0, param.enc_len());
                 Marshal.FreeHGlobal(this_ptr);
@@ -98,7 +98,7 @@ namespace NTRU.types
                 IntPtr this_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(this));
                 Marshal.StructureToPtr(this, this_ptr, false);
                 byte[] a = new byte[param.enc_len()];
-                IntPtr a_byte = new IntPtr(a[0]);
+                IntPtr a_byte = Marshal.AllocHGlobal(param.enc_len());
                 ffi.ntru_to_arr_64(this_ptr, param.get_q(), a_byte);
                 Marshal.Copy(a_byte, a, 0, param.enc_len());
                 Marshal.FreeHGlobal(this_ptr);
@@ -110,7 +110,7 @@ namespace NTRU.types
                 IntPtr this_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(this));
                 Marshal.StructureToPtr(this, this_ptr, false);
                 byte[] a = new byte[param.enc_len()];
-                IntPtr a_byte = new IntPtr(a[0]);
+                IntPtr a_byte = Marshal.AllocHGlobal(param.enc_len());
                 ffi.ntru_to_arr_sse_2048(this_ptr, a_byte);
                 Marshal.Copy(a_byte, a, 0, param.enc_len());
                 Marshal.FreeHGlobal(this_ptr);

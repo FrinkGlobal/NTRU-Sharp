@@ -6,12 +6,12 @@ namespace NTRU
 {
     public static class ffi
     {
-
+        [StructLayout(LayoutKind.Sequential)]
         public struct CNtruRandomContext {
             public IntPtr rand_gen;
 
             public IntPtr seed;
-
+            [MarshalAs(UnmanagedType.U2)]
             public ushort seed_len;
 
             public IntPtr state;
