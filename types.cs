@@ -351,7 +351,7 @@ namespace NTRU.types
                 IntPtr param_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(param));
                 Marshal.StructureToPtr(param, param_ptr, false);
                 var result = ffi.ntru_params_from_priv_key(key_ptr, param_ptr);
-                 if (result == 1)
+                 if (result != 0)
                     Console.WriteLine("Error: Failed to Get Encryption Params from private key");
                 Marshal.PtrToStructure(param_ptr, param);
                 Marshal.FreeHGlobal(param_ptr);

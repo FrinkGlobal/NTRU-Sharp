@@ -58,6 +58,7 @@ namespace NTRU.rand
 
     [StructLayout(LayoutKind.Sequential)]
     public struct RandGen {
+
         [MarshalAsAttribute(UnmanagedType.FunctionPtr)]
         Func<IntPtr, IntPtr, byte> init_fn;
         [MarshalAsAttribute(UnmanagedType.FunctionPtr)]
@@ -73,15 +74,15 @@ namespace NTRU.rand
 
         public RandContext init(RandGen rand_gen) {
             RandContext rand_ctx = RandContext.Default();
-            IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx));
+            IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.rand_ctx));
             IntPtr rand_gen_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_gen));
             Marshal.StructureToPtr(rand_ctx, rand_ctx_ptr, false);
             Marshal.StructureToPtr(rand_gen, rand_gen_ptr, false);
             var result = this.init_fn(rand_ctx_ptr, rand_gen_ptr);
-            if (result == 0)
+            if (result != 0)
                 Console.WriteLine("Error: Failed to Initialize RandContext");
             
-            Marshal.PtrToStructure(rand_ctx_ptr, rand_ctx);
+            Marshal.PtrToStructure(rand_ctx_ptr, rand_ctx.rand_ctx);
             Marshal.FreeHGlobal(rand_ctx_ptr);
             Marshal.FreeHGlobal(rand_gen_ptr);
             return rand_ctx;
@@ -93,7 +94,7 @@ namespace NTRU.rand
             Marshal.StructureToPtr(rand_ctx.rand_ctx, rand_ctx_ptr, false);
             IntPtr plain_ptr = Marshal.AllocHGlobal(length);
             var result = this.generate_fn(plain_ptr, length, rand_ctx_ptr);
-             if (result == 0)
+             if (result != 0)
                 Console.WriteLine("Error: Failed to Generate plain");
             
             Marshal.Copy(plain_ptr, plain, 0, length);
@@ -124,10 +125,10 @@ namespace NTRU.rand
             Marshal.StructureToPtr(rand_ctx, rand_ctx_ptr, false);
             IntPtr rand_gen_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_gen));
             Marshal.StructureToPtr(rand_gen, rand_ctx_ptr, false);
-            var result = ffi.ntru_rand_init (rand_ctx_ptr, rand_gen_ptr);
-             if (result == 0)
+            var result = ffi.ntru_rand_init (out rand_ctx_ptr, rand_gen_ptr);
+             if (result != 0)
                 Console.WriteLine("Error: Failed to Initialize RandomContext");
-            Marshal.PtrToStructure(rand_ctx_ptr, rand_ctx);
+            Marshal.PtrToStructure(rand_ctx_ptr, rand_ctx.rand_ctx);
             Marshal.FreeHGlobal(rand_gen_ptr);
             Marshal.FreeHGlobal(rand_ctx_ptr);
             return rand_ctx;
@@ -142,7 +143,7 @@ namespace NTRU.rand
             IntPtr seed_ptr = Marshal.AllocHGlobal(seed.Length);
             Marshal.Copy(seed, 0, seed_ptr, seed.Length);
             var result = ffi.ntru_rand_init_det (rand_ctx_ptr, rand_gen_ptr, seed_ptr, (ushort)seed.Length);
-            if (result == 0)
+            if (result != 0)
                 Console.WriteLine("Error: Failed to Initialize Deterministic RandomContext");
             Marshal.PtrToStructure(rand_ctx_ptr, rand_ctx);
             Marshal.FreeHGlobal(rand_ctx_ptr);
@@ -157,7 +158,7 @@ namespace NTRU.rand
             IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.rand_ctx));
             Marshal.StructureToPtr(rand_ctx.rand_ctx, rand_ctx_ptr, false);
             var result = ffi.ntru_rand_generate(plain_ptr, length, rand_ctx_ptr);
-            if (result == 0)
+            if (result != 0)
                 Console.WriteLine("Error: Failed to Generate Random Data");
             Marshal.Copy(plain_ptr, plain, 0, length);
             Marshal.FreeHGlobal(plain_ptr);
