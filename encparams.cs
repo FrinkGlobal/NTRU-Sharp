@@ -37,9 +37,9 @@ namespace NTRU.Params
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
         byte[] oid;
         [MarshalAsAttribute(UnmanagedType.FunctionPtr)]
-        Action<IntPtr, ushort, IntPtr> hash;
+        Action<IntPtr, IntPtr, IntPtr> hash;
         [MarshalAsAttribute(UnmanagedType.FunctionPtr)]
-        Action<IntPtr, ushort, IntPtr> hash_4way;
+        Action<IntPtr, IntPtr, IntPtr> hash_4way;
         [MarshalAs(UnmanagedType.U2)]
         ushort hlen;
         [MarshalAs(UnmanagedType.U2)]
@@ -87,7 +87,7 @@ namespace NTRU.Params
             }
         }
 
-        public EncParams (byte[] name, ushort n, ushort q, byte product_flag, ushort df1, ushort df2, ushort df3, ushort dg, ushort dm0, ushort db, ushort c, ushort min_calls_r, ushort min_calls_mask, byte hash_seed, byte[] oid, Action<IntPtr, ushort, IntPtr> hash, Action<IntPtr, ushort, IntPtr> hash_4way, ushort hlen, ushort pklen) {
+        public EncParams (byte[] name, ushort n, ushort q, byte product_flag, ushort df1, ushort df2, ushort df3, ushort dg, ushort dm0, ushort db, ushort c, ushort min_calls_r, ushort min_calls_mask, byte hash_seed, byte[] oid, Action<IntPtr, IntPtr, IntPtr> hash, Action<IntPtr, IntPtr, IntPtr> hash_4way, ushort hlen, ushort pklen) {
             this.name = name;
             this.n = n;
             this.q = q;

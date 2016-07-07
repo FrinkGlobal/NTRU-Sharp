@@ -21,7 +21,7 @@ Download NTRU source [here] (https://github.com/tbuktu/libntru)
 
 Download and install latest distribution [here] (http://www.mono-project.com/download/)
 
-# Compiling & Testing NTRU-Sharp
+## Compiling & Testing NTRU-Sharp
 
 Compile the C# code
 

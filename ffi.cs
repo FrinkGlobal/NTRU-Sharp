@@ -41,37 +41,37 @@ namespace NTRU
         [DllImport("ntru")]
         public static extern byte ntru_gen_pub (IntPtr param, IntPtr priv, IntPtr pub, IntPtr rand_ctx);
         [DllImport("ntru")]
-        public static extern byte ntru_encrypt (IntPtr msg, ushort msg_len, IntPtr pub, IntPtr param, IntPtr rand_ctx, IntPtr enc);
+        public static extern byte ntru_encrypt (IntPtr msg, IntPtr msg_len, IntPtr pub, IntPtr param, IntPtr rand_ctx, IntPtr enc);
         [DllImport("ntru")]
         public static extern byte ntru_decrypt (IntPtr enc, IntPtr kp, IntPtr param, IntPtr dec, out IntPtr dec_len);
         [DllImport("ntru")]
-        public static extern void ntru_sha1 (IntPtr input, ushort input_len, IntPtr digest);
+        public static extern void ntru_sha1 (IntPtr input, IntPtr input_len, IntPtr digest);
         [DllImport("ntru")]
-        public static extern void ntru_sha1_4way (IntPtr input, ushort input_len, IntPtr digest);
+        public static extern void ntru_sha1_4way (IntPtr input, IntPtr input_len, IntPtr digest);
         [DllImport("ntru")]
-        public static extern void ntru_sha256 (IntPtr input, ushort input_len, IntPtr digest);
+        public static extern void ntru_sha256 (IntPtr input, IntPtr input_len, IntPtr digest);
         [DllImport("ntru")]
-        public static extern void ntru_sha256_4way (IntPtr input, ushort input_len, IntPtr digest);
+        public static extern void ntru_sha256_4way (IntPtr input, IntPtr input_len, IntPtr digest);
         [DllImport("ntru")]
-        public static extern byte ntru_rand_init (out IntPtr rand_ctx, IntPtr rand_gen);
+        public static extern IntPtr ntru_rand_init (out IntPtr rand_ctx, IntPtr rand_gen);
         [DllImport("ntru")]
-        public static extern byte ntru_rand_init_det (IntPtr rand_ctx, IntPtr rand_gen, IntPtr seed, ushort seed_len);
+        public static extern IntPtr ntru_rand_init_det (IntPtr rand_ctx, IntPtr rand_gen, IntPtr seed, IntPtr seed_len);
         [DllImport("ntru")]
-        public static extern byte ntru_rand_generate (IntPtr rand_data, ushort len, IntPtr rand_ctx);
+        public static extern IntPtr ntru_rand_generate (IntPtr rand_data, IntPtr len, IntPtr rand_ctx);
         [DllImport("ntru")]
-        public static extern byte ntru_rand_release (IntPtr rand_ctx);
+        public static extern IntPtr ntru_rand_release (IntPtr rand_ctx);
         [DllImport("ntru")]
-        public static extern byte ntru_rand_default_init (IntPtr rand_ctx, IntPtr rand_gen);
+        public static extern IntPtr ntru_rand_default_init (IntPtr rand_ctx, IntPtr rand_gen);
         [DllImport("ntru")]
-        public static extern byte ntru_rand_default_generate (IntPtr rand_data, ushort len, IntPtr rand_ctx);
+        public static extern IntPtr ntru_rand_default_generate (IntPtr rand_data, IntPtr len, IntPtr rand_ctx);
         [DllImport("ntru")]
-        public static extern byte ntru_rand_default_release (IntPtr rand_ctx);
+        public static extern IntPtr ntru_rand_default_release (IntPtr rand_ctx);
         [DllImport("ntru")]
-        public static extern byte ntru_rand_igf2_init (IntPtr rand_ctx, IntPtr rand_gen);
+        public static extern IntPtr ntru_rand_igf2_init (IntPtr rand_ctx, IntPtr rand_gen);
         [DllImport("ntru")]
-        public static extern byte ntru_rand_igf2_generate (IntPtr rand_data, ushort len, IntPtr rand_ctx);
+        public static extern IntPtr ntru_rand_igf2_generate (IntPtr rand_data, IntPtr len, IntPtr rand_ctx);
         [DllImport("ntru")]
-        public static extern byte ntru_rand_igf2_release (IntPtr rand_ctx);
+        public static extern IntPtr ntru_rand_igf2_release (IntPtr rand_ctx);
         [DllImport("ntru")]
         public static extern byte ntru_rand_tern (ushort n, ushort num_ones, ushort num_neg_ones, IntPtr poly, IntPtr rand_ctx);
         [DllImport("ntru")]

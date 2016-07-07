@@ -60,8 +60,8 @@ namespace NTRU.types
                 IntPtr arr_ptr = Marshal.AllocHGlobal(arr.Length);
                 Marshal.Copy(arr, 0, arr_ptr, arr.Length);
                 ffi.ntru_from_arr(arr_ptr, n, q, poly_ptr);
-                Marshal.PtrToStructure(poly_ptr, p);
-                Marshal.FreeHGlobal(poly_ptr);
+                p = (IntPoly)Marshal.PtrToStructure(poly_ptr, typeof(IntPoly));
+                //Marshal.FreeHGlobal(poly_ptr);
                 Marshal.FreeHGlobal(arr_ptr);
                 return p;
             }
@@ -82,8 +82,8 @@ namespace NTRU.types
                 IntPtr other_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rhs));
                 Marshal.StructureToPtr(rhs, other_ptr, false);
                 ffi.ntru_add(this_ptr, other_ptr);
-                Marshal.PtrToStructure(this_ptr, this);
-                Marshal.FreeHGlobal(this_ptr);
+                this = (IntPoly)Marshal.PtrToStructure(this_ptr, typeof(IntPoly));
+                //Marshal.FreeHGlobal(this_ptr);
                 Marshal.FreeHGlobal(other_ptr);
             }
 
@@ -93,8 +93,8 @@ namespace NTRU.types
                 IntPtr other_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rhs));
                 Marshal.StructureToPtr(rhs, other_ptr, false);
                 ffi.ntru_sub(this_ptr, other_ptr);
-                Marshal.PtrToStructure(this_ptr, this);
-                Marshal.FreeHGlobal(this_ptr);
+                this = (IntPoly)Marshal.PtrToStructure(this_ptr, typeof(IntPoly));
+                //Marshal.FreeHGlobal(this_ptr);
                 Marshal.FreeHGlobal(other_ptr);
             }
 
@@ -213,8 +213,8 @@ namespace NTRU.types
                 var result = ffi.ntru_rand_tern(n, num_ones, num_neg_ones, poly_ptr, rand_ctx_ptr);
                 if (result == 0)
                     Console.WriteLine("Error: Failed to Generate Random TernPoly");
-                Marshal.PtrToStructure(poly_ptr, poly);
-                Marshal.FreeHGlobal(poly_ptr);
+                poly = (TernPoly)Marshal.PtrToStructure(poly_ptr, typeof(TernPoly));
+                //Marshal.FreeHGlobal(poly_ptr);
                 Marshal.FreeHGlobal(rand_ctx_ptr);
                 return poly;
             }
@@ -353,9 +353,9 @@ namespace NTRU.types
                 var result = ffi.ntru_params_from_priv_key(key_ptr, param_ptr);
                  if (result != 0)
                     Console.WriteLine("Error: Failed to Get Encryption Params from private key");
-                Marshal.PtrToStructure(param_ptr, param);
-                Marshal.FreeHGlobal(param_ptr);
-                Marshal.FreeHGlobal(key_ptr);
+                param = (EncParams)Marshal.PtrToStructure(param_ptr, typeof(EncParams));
+                //Marshal.FreeHGlobal(param_ptr);
+                //Marshal.FreeHGlobal(key_ptr);
                 return param;
             }
 
@@ -366,8 +366,8 @@ namespace NTRU.types
                 IntPtr arr_ptr = Marshal.AllocHGlobal(arr.Length);
                 Marshal.Copy(arr, 0, arr_ptr, arr.Length);
                 ffi.ntru_import_priv(arr_ptr, key_ptr);
-                Marshal.PtrToStructure(key_ptr, key);
-                Marshal.FreeHGlobal(key_ptr);
+                key = (PrivateKey)Marshal.PtrToStructure(key_ptr, typeof(PrivateKey));
+                //Marshal.FreeHGlobal(key_ptr);
                 Marshal.FreeHGlobal(arr_ptr);
                 return key;
             }
@@ -416,7 +416,8 @@ namespace NTRU.types
                 IntPtr arr_ptr = Marshal.AllocHGlobal(arr.Length);
                 Marshal.Copy(arr, 0, arr_ptr, arr.Length);
                 ffi.ntru_import_pub(arr_ptr, key_ptr);
-                Marshal.PtrToStructure(key_ptr, key);
+                key = (PublicKey)Marshal.PtrToStructure(key_ptr, typeof(PublicKey));
+                Marshal.FreeHGlobal(arr_ptr);
                 return key;
             }
 

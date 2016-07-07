@@ -14,13 +14,13 @@ namespace NTRU
             Marshal.StructureToPtr(kp, key_ptr, false);
             IntPtr param_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(param));
             Marshal.StructureToPtr(param, param_ptr, false);
-            IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_context));
-            Marshal.StructureToPtr(rand_context, rand_ctx_ptr, false);
+            IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_context.rand_ctx));
+            Marshal.StructureToPtr(rand_context.rand_ctx, rand_ctx_ptr, false);
             var result = ffi.ntru_gen_key_pair(param_ptr, key_ptr, rand_ctx_ptr);
             if (result != 0)
                     Console.WriteLine("Error: Failed to Generate KeyPair");
-            Marshal.PtrToStructure(key_ptr, kp);
-            Marshal.FreeHGlobal(key_ptr);
+            kp = (KeyPair)Marshal.PtrToStructure(key_ptr, typeof(KeyPair));
+            //Marshal.FreeHGlobal(key_ptr);
             Marshal.FreeHGlobal(param_ptr);
             Marshal.FreeHGlobal(rand_ctx_ptr);
             return kp;
@@ -37,7 +37,8 @@ namespace NTRU
             Marshal.StructureToPtr(param, param_ptr, false);
             IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.get_c_rand_ctx()));
             Marshal.StructureToPtr(rand_ctx.get_c_rand_ctx(), rand_ctx_ptr, false);
-            var result = ffi.ntru_encrypt(msg_ptr, (ushort)msg.Length, pub_ptr, param_ptr, rand_ctx_ptr, enc_ptr);
+            IntPtr msg_len_ptr = new IntPtr(msg.Length); 
+            var result = ffi.ntru_encrypt(msg_ptr, msg_len_ptr, pub_ptr, param_ptr, rand_ctx_ptr, enc_ptr);
             if (result != 0)
                     Console.WriteLine("Error: Failed to Encrypt Message");
             Marshal.Copy(enc_ptr, enc, 0, enc.Length);
