@@ -12,7 +12,9 @@ namespace NTRU.types
         /// (Max #coefficients + 16) rounded to multiple of 8
         public const uint INT_POLY_SIZE = ((MAX_DEGREE + 16 +7) & 0xFFF8);
         /// max (df1, df2, df3, dg)
-        public const uint MAX_ONES = 499;      
+        public const uint MAX_ONES = 499;
+        /// Size of the union in 16 bit words
+        public const uint PRIVUNION_SIZE = 3004;      
 
     }
 
@@ -202,6 +204,21 @@ namespace NTRU.types
                 return this.neg_ones;
             }
 
+            public static TernPoly rand(ushort n, ushort num_ones, ushort num_neg_ones, RandContext rand_ctx) {
+                TernPoly poly = TernPoly.Default();
+                IntPtr poly_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(poly));
+                Marshal.StructureToPtr(poly, poly_ptr, false);
+                IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.rand_ctx));
+                Marshal.StructureToPtr(rand_ctx.rand_ctx, rand_ctx_ptr, false);
+                var result = ffi.ntru_rand_tern(n, num_ones, num_neg_ones, poly_ptr, rand_ctx_ptr);
+                if (result == 0)
+                    Console.WriteLine("Error: Failed to Generate Random TernPoly");
+                Marshal.PtrToStructure(poly_ptr, poly);
+                Marshal.FreeHGlobal(poly_ptr);
+                Marshal.FreeHGlobal(rand_ctx_ptr);
+                return poly;
+            }
+
             public IntPoly to_int_poly() {
 
                 short[] coeffs = new short[types.INT_POLY_SIZE];
@@ -241,9 +258,208 @@ namespace NTRU.types
                 return new ProdPoly (0, TernPoly.Default(), TernPoly.Default(), TernPoly.Default());
             }
 
+            public static ProdPoly rand(ushort n, ushort df1, ushort df2, ushort df3_ones, ushort df3_neg_ones, RandContext rand_ctx) {
+                TernPoly f1 = TernPoly.rand(n, df1, df1, rand_ctx);
+                TernPoly f2 = TernPoly.rand(n, df2, df2, rand_ctx);
+                TernPoly f3 = TernPoly.rand(n, df3_ones, df3_neg_ones, rand_ctx);
+                return new ProdPoly(n, f1, f2, f3);
+            }
+
+        }
 
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct PrivUnion {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = (int)types.PRIVUNION_SIZE)]
+            ushort[] data;
 
+            public PrivUnion(ushort[] data) {
+               this.data = data; 
+            }
+
+            public static PrivUnion Default() {
+                ushort[] new_data = new ushort[types.PRIVUNION_SIZE];
+                return new PrivUnion(new_data);
+            }
+
+            public PrivUnion clone() {
+                return new PrivUnion(this.data);
+            }
+
+
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct PrivPoly {
+            [MarshalAs(UnmanagedType.U1)]
+            byte product_flag;
+
+            PrivUnion poly;
+
+            public PrivPoly (byte product_flag, PrivUnion poly) {
+                this.product_flag = product_flag;
+                this.poly = poly;
+            }
+
+            public static PrivPoly Default() {
+                return new PrivPoly(0, PrivUnion.Default());
+            }
+        
+            public static PrivPoly new_with_prod_poly (ProdPoly poly) {
+                throw new NotImplementedException();
+            }
+
+            public static PrivPoly new_with_tern_poly (TernPoly poly) {
+                throw new NotImplementedException();
+            } 
+
+            public bool is_product() {
+                return (this.product_flag == 1);
+            }
+
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct PrivateKey {
+            [MarshalAs(UnmanagedType.U2)]
+            ushort q;
+
+            PrivPoly t;
+
+
+            public PrivateKey (ushort q, PrivPoly t) {
+                this.q = q;
+                this.t = t;
+            }
+
+            public static PrivateKey Default() {
+                return new PrivateKey(0, PrivPoly.Default());
+            }
+
+            public ushort get_q() {
+                return q;
+            }
+
+            public PrivPoly get_t() {
+                return t;
+            }
+
+            public EncParams get_params() {
+                EncParams param = EncParams.Default();
+                IntPtr key_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(this));
+                Marshal.StructureToPtr(this, key_ptr, false);
+                IntPtr param_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(param));
+                Marshal.StructureToPtr(param, param_ptr, false);
+                var result = ffi.ntru_params_from_priv_key(key_ptr, param_ptr);
+                 if (result == 1)
+                    Console.WriteLine("Error: Failed to Get Encryption Params from private key");
+                Marshal.PtrToStructure(param_ptr, param);
+                Marshal.FreeHGlobal(param_ptr);
+                Marshal.FreeHGlobal(key_ptr);
+                return param;
+            }
+
+            public static PrivateKey import(byte[] arr) {
+                PrivateKey key = PrivateKey.Default();
+                IntPtr key_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(key));
+                Marshal.StructureToPtr(key, key_ptr, false);
+                IntPtr arr_ptr = Marshal.AllocHGlobal(arr.Length);
+                Marshal.Copy(arr, 0, arr_ptr, arr.Length);
+                ffi.ntru_import_priv(arr_ptr, key_ptr);
+                Marshal.PtrToStructure(key_ptr, key);
+                Marshal.FreeHGlobal(key_ptr);
+                Marshal.FreeHGlobal(arr_ptr);
+                return key;
+            }
+
+            public byte[] export(EncParams param) {
+                byte[] arr = new byte[param.private_len()];
+                IntPtr key_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(this));
+                Marshal.StructureToPtr(this, key_ptr, false);
+                IntPtr arr_ptr = Marshal.AllocHGlobal(arr.Length);
+                ffi.ntru_export_priv(key_ptr, arr_ptr);
+                Marshal.Copy(arr_ptr, arr, 0, arr.Length);
+                Marshal.FreeHGlobal(key_ptr);
+                Marshal.FreeHGlobal(arr_ptr);
+                return arr;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct PublicKey {
+            [MarshalAs(UnmanagedType.U2)]
+            ushort q;
+
+            IntPoly h;
+
+
+            public PublicKey (ushort q, IntPoly h) {
+                this.q = q;
+                this.h = h;
+            }
+
+            public static PublicKey Default() {
+                return new PublicKey(0, IntPoly.Default());
+            }
+
+            public ushort get_q() {
+                return q;
+            }
+
+            public IntPoly get_h() {
+                return h;
+            }
+
+            public static PublicKey import(byte[] arr) {
+                PublicKey key = PublicKey.Default();
+                IntPtr key_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(key));
+                IntPtr arr_ptr = Marshal.AllocHGlobal(arr.Length);
+                Marshal.Copy(arr, 0, arr_ptr, arr.Length);
+                ffi.ntru_import_pub(arr_ptr, key_ptr);
+                Marshal.PtrToStructure(key_ptr, key);
+                return key;
+            }
+
+            public byte[] export(EncParams param) {
+                byte[] arr = new byte[param.enc_len()];
+                IntPtr arr_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(arr.Length));
+                IntPtr key_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(this));
+                Marshal.StructureToPtr(this, key_ptr, false);
+                ffi.ntru_export_pub(key_ptr, arr_ptr);
+                Marshal.Copy(arr_ptr, arr, 0, arr.Length);
+                Marshal.FreeHGlobal(key_ptr);
+                Marshal.FreeHGlobal(arr_ptr);
+                return arr;
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct KeyPair {
+            
+            PrivateKey Private;
+
+            PublicKey Public;
+
+            public KeyPair (PrivateKey Private, PublicKey Public) {
+                this.Private = Private;
+                this.Public = Public;
+            }
+
+            public static KeyPair Default() {
+                return new KeyPair (PrivateKey.Default(), PublicKey.Default());
+            }
+
+            public EncParams get_params() {
+                return Private.get_params();
+            }
+
+            public PrivateKey get_private() {
+                return Private;
+            }
+
+            public PublicKey get_public() {
+                return Public;
+            }
         }
 
 }

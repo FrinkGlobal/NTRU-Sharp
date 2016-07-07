@@ -30,7 +30,7 @@ namespace NTRU
                 this.seed = seed;
                 this.seed_len = seed_len;
                 this.state = state;
-                Marshal.FreeHGlobal(rand_gen_ptr);
+                ///Marshal.FreeHGlobal(rand_gen_ptr);
             }
         }
 
@@ -43,11 +43,15 @@ namespace NTRU
         [DllImport("ntru")]
         public static extern byte ntru_encrypt (IntPtr msg, ushort msg_len, IntPtr pub, IntPtr param, IntPtr rand_ctx, IntPtr enc);
         [DllImport("ntru")]
-        public static extern byte ntru_decrypt (IntPtr enc, IntPtr kp, IntPtr param, IntPtr dec, IntPtr dec_len);
+        public static extern byte ntru_decrypt (IntPtr enc, IntPtr kp, IntPtr param, IntPtr dec, out IntPtr dec_len);
         [DllImport("ntru")]
         public static extern void ntru_sha1 (IntPtr input, ushort input_len, IntPtr digest);
         [DllImport("ntru")]
         public static extern void ntru_sha1_4way (IntPtr input, ushort input_len, IntPtr digest);
+        [DllImport("ntru")]
+        public static extern void ntru_sha256 (IntPtr input, ushort input_len, IntPtr digest);
+        [DllImport("ntru")]
+        public static extern void ntru_sha256_4way (IntPtr input, ushort input_len, IntPtr digest);
         [DllImport("ntru")]
         public static extern byte ntru_rand_init (IntPtr rand_ctx, IntPtr rand_gen);
         [DllImport("ntru")]

@@ -58,10 +58,11 @@ namespace NTRU.rand
 
     [StructLayout(LayoutKind.Sequential)]
     public struct RandGen {
+        [MarshalAsAttribute(UnmanagedType.FunctionPtr)]
         Func<IntPtr, IntPtr, byte> init_fn;
-
+        [MarshalAsAttribute(UnmanagedType.FunctionPtr)]
         Func<IntPtr, ushort, IntPtr, byte> generate_fn;
-
+        [MarshalAsAttribute(UnmanagedType.FunctionPtr)]
         Func<IntPtr, byte> release_fn;
 
         public RandGen (Func<IntPtr, IntPtr, byte> init_fn, Func<IntPtr, ushort, IntPtr, byte> generate_fn, Func<IntPtr, byte> release_fn) {
