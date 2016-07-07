@@ -30,7 +30,7 @@ namespace NTRU
                 this.seed = seed;
                 this.seed_len = seed_len;
                 this.state = state;
-                ///Marshal.FreeHGlobal(rand_gen_ptr);
+                ///Marshal.FreeHGlobal(rand_gen_ptr);  Does This break the struct? or does not doing this cause a memory leak
             }
         }
 

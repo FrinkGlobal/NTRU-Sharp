@@ -76,7 +76,7 @@ namespace NTRU.rand
             RandContext rand_ctx = RandContext.Default();
             IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.rand_ctx));
             IntPtr rand_gen_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_gen));
-            Marshal.StructureToPtr(rand_ctx, rand_ctx_ptr, false);
+            Marshal.StructureToPtr(rand_ctx.rand_ctx, rand_ctx_ptr, false);
             Marshal.StructureToPtr(rand_gen, rand_gen_ptr, false);
             var result = this.init_fn(rand_ctx_ptr, rand_gen_ptr);
             if (result != 0)
@@ -122,7 +122,7 @@ namespace NTRU.rand
         public static RandContext init (RandGen rand_gen) {
             RandContext rand_ctx = RandContext.Default();
             IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.rand_ctx));
-            Marshal.StructureToPtr(rand_ctx, rand_ctx_ptr, false);
+            Marshal.StructureToPtr(rand_ctx.rand_ctx, rand_ctx_ptr, false);
             IntPtr rand_gen_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_gen));
             Marshal.StructureToPtr(rand_gen, rand_ctx_ptr, false);
             var result = ffi.ntru_rand_init (out rand_ctx_ptr, rand_gen_ptr);
