@@ -16,7 +16,7 @@ namespace NTRU
             Console.WriteLine("Successfully Generated Keys!!");
             byte[] msg = Encoding.UTF8.GetBytes("Hello from NTRU!");
            
-            byte[] encrypted = NTRUWrapper.encrypt(msg, kp.Public, EncParamSets.DEFAULT_PARAMS_256_BITS, rand_ctx);
+            byte[] encrypted = NTRUWrapper.encrypt(msg, kp.get_public(), EncParamSets.DEFAULT_PARAMS_256_BITS, rand_ctx);
             byte[] decrypted = NTRUWrapper.decrypt(encrypted, kp, EncParamSets.DEFAULT_PARAMS_256_BITS);
             Console.WriteLine(Encoding.UTF8.GetString(decrypted));
             if (Encoding.UTF8.GetString(decrypted) == "Hello from NTRU!")
@@ -27,6 +27,24 @@ namespace NTRU
             {
                 Console.WriteLine("Ecryption / Decryption Test Failed!");
             }
+
+            byte[] exportedPriv = kp.get_private().export(EncParamSets.DEFAULT_PARAMS_256_BITS);
+            byte[] exportedPub = kp.get_public().export(EncParamSets.DEFAULT_PARAMS_256_BITS);
+            
+            // PublicKey pub = PublicKey.import(exportedPub);
+            // PrivateKey priv = PrivateKey.import(exportedPriv);
+
+            // KeyPair newKP = new KeyPair(priv, pub);
+
+            // if(newKP == kp) {
+            //     Console.WriteLine("Importing  / Exporting Key Test Succeded!");
+            // }
+            // else
+            // {
+            //     Console.WriteLine("Importing  / Exporting Key Test Failed!");
+            // }
+            
+
 
         }
     }

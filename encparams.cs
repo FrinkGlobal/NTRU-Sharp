@@ -78,12 +78,12 @@ namespace NTRU.Params
         public ushort public_len() {  return (ushort)(4 + this.enc_len()); }
 
         public ushort private_len() {
-            if(product_flag == 1) {
-               return (ushort) (5 + 5 + 4 * df1 + 4 + 4 * df2 + 4 + 4 * df3); 
+            if(this.product_flag == 1) {
+               return (ushort) (5 + 5 + 4 * this.df1 + 4 + 4 * this.df2 + 4 + 4 * this.df3); 
             }
             else
             {
-                return (ushort) (5 + 4 + 4 * df1);
+                return (ushort) (5 + 4 + 4 * this.df1);
             }
         }
 

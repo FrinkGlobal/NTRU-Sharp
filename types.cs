@@ -147,6 +147,13 @@ namespace NTRU.types
                 return a;
             }
 
+            public static bool operator == (IntPoly a, IntPoly b) {
+                return a.Equals(b);
+            }
+
+            public static bool operator != (IntPoly a, IntPoly b) {
+                return !a.Equals(b);
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -234,6 +241,13 @@ namespace NTRU.types
                 return new IntPoly(this.n, coeffs);
             }
 
+            public static bool operator ==(TernPoly a, TernPoly b) {
+                return a.Equals(b);
+            }
+
+            public static bool operator !=(TernPoly a, TernPoly b) {
+                return !a.Equals(b);
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -265,6 +279,14 @@ namespace NTRU.types
                 return new ProdPoly(n, f1, f2, f3);
             }
 
+            public static bool operator ==(ProdPoly a, ProdPoly b) {
+                return a.Equals(b);
+            }
+
+            public static bool operator !=(ProdPoly a, ProdPoly b) {
+                return !a.Equals(b);
+            }
+
         }
 
 
@@ -286,7 +308,13 @@ namespace NTRU.types
                 return new PrivUnion(this.data);
             }
 
+            public static bool operator ==(PrivUnion a, PrivUnion b) {
+                return a.Equals(b);
+            }
 
+            public static bool operator !=(PrivUnion a, PrivUnion b) {
+                return !a.Equals(b);
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -317,6 +345,14 @@ namespace NTRU.types
                 return (this.product_flag == 1);
             }
 
+
+            public static bool operator ==(PrivPoly a, PrivPoly b) {
+                return a.Equals(b);
+            }
+
+            public static bool operator !=(PrivPoly a, PrivPoly b) {
+                return !a.Equals(b);
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -355,7 +391,7 @@ namespace NTRU.types
                     Console.WriteLine("Error: Failed to Get Encryption Params from private key");
                 param = (EncParams)Marshal.PtrToStructure(param_ptr, typeof(EncParams));
                 //Marshal.FreeHGlobal(param_ptr);
-                //Marshal.FreeHGlobal(key_ptr);
+                Marshal.FreeHGlobal(key_ptr);
                 return param;
             }
 
@@ -368,7 +404,7 @@ namespace NTRU.types
                 ffi.ntru_import_priv(arr_ptr, key_ptr);
                 key = (PrivateKey)Marshal.PtrToStructure(key_ptr, typeof(PrivateKey));
                 //Marshal.FreeHGlobal(key_ptr);
-                Marshal.FreeHGlobal(arr_ptr);
+                //Marshal.FreeHGlobal(arr_ptr);
                 return key;
             }
 
@@ -382,6 +418,14 @@ namespace NTRU.types
                 Marshal.FreeHGlobal(key_ptr);
                 Marshal.FreeHGlobal(arr_ptr);
                 return arr;
+            }
+
+            public static bool operator ==(PrivateKey a, PrivateKey b) {
+                return a.Equals(b);
+            }
+
+            public static bool operator !=(PrivateKey a, PrivateKey b) {
+                return !a.Equals(b);
             }
         }
 
@@ -417,12 +461,12 @@ namespace NTRU.types
                 Marshal.Copy(arr, 0, arr_ptr, arr.Length);
                 ffi.ntru_import_pub(arr_ptr, key_ptr);
                 key = (PublicKey)Marshal.PtrToStructure(key_ptr, typeof(PublicKey));
-                Marshal.FreeHGlobal(arr_ptr);
+                //Marshal.FreeHGlobal(arr_ptr);
                 return key;
             }
 
             public byte[] export(EncParams param) {
-                byte[] arr = new byte[param.enc_len()];
+                byte[] arr = new byte[param.public_len()];
                 IntPtr arr_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(arr.Length));
                 IntPtr key_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(this));
                 Marshal.StructureToPtr(this, key_ptr, false);
@@ -432,36 +476,24 @@ namespace NTRU.types
                 Marshal.FreeHGlobal(arr_ptr);
                 return arr;
             }
-        }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct CNtruKeyPair
-        {
-            IntPtr Private;
-
-            IntPtr Public;
-
-            public CNtruKeyPair (IntPtr Private, IntPtr Public) {
-                this.Private = Private;
-                this.Public = Public;
+            public static bool operator ==(PublicKey a, PublicKey b) {
+                return a.Equals(b);
             }
 
-            public static CNtruKeyPair Default() {
-                IntPtr def_priv_key = Marshal.AllocHGlobal(Marshal.SizeOf(PrivateKey.Default()));
-                Marshal.StructureToPtr(PrivateKey.Default(), def_priv_key, false);
-                IntPtr def_pub_key = Marshal.AllocHGlobal(Marshal.SizeOf(PublicKey.Default()));
-                Marshal.StructureToPtr(PublicKey.Default(), def_pub_key, false);
-                return new CNtruKeyPair(def_priv_key, def_pub_key);
+            public static bool operator !=(PublicKey a, PublicKey b) {
+                return !a.Equals(b);
             }
         }
 
+        
 
         [StructLayout(LayoutKind.Sequential)]
         public struct KeyPair {
             
-            public PrivateKey Private;
+            PrivateKey Private;
 
-            public PublicKey Public;
+            PublicKey Public;
 
             public KeyPair (PrivateKey Private, PublicKey Public) {
                 this.Private = Private;
@@ -482,6 +514,14 @@ namespace NTRU.types
 
             public PublicKey get_public() {
                 return Public;
+            }
+
+            public static bool operator ==(KeyPair a, KeyPair b) {
+                return a.Equals(b);
+            }
+
+            public static bool operator !=(KeyPair a, KeyPair b) {
+                return !a.Equals(b);
             }
         }
 

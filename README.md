@@ -9,6 +9,8 @@ This wrapper intends to use only Mono 2.0  libraries to make it compatible with 
 - [x] Generate Keypair
 - [x] Encrypt
 - [x] Decrypt
+- [ ] Exporting Keys
+- [ ] Importing Keys
 - [ ] Documentation
 
 ## Dependencies

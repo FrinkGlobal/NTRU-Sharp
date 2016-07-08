@@ -9,18 +9,14 @@ namespace NTRU
     public static class NTRUWrapper {
 
         public static KeyPair generate_key_pair(EncParams param, RandContext rand_context) {
-            Console.WriteLine("Creating Default C# KeyPair");
             KeyPair kp = KeyPair.Default();
-            Console.WriteLine("C# Default KeyPair Created");
-           // CNtruKeyPair ckp = CNtruKeyPair.Default();
             IntPtr key_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(kp));
             Marshal.StructureToPtr(kp, key_ptr, false);
             IntPtr param_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(param));
             Marshal.StructureToPtr(param, param_ptr, false);
             IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_context.rand_ctx));
             Marshal.StructureToPtr(rand_context.rand_ctx, rand_ctx_ptr, false);
-            var result = ffi.ntru_gen_key_pair(param_ptr, key_ptr, rand_ctx_ptr);
-            
+            var result = ffi.ntru_gen_key_pair(param_ptr, key_ptr, rand_ctx_ptr);         
             if (result.ToInt32() != 0)
                     Console.WriteLine("Error: Failed to Generate KeyPair");
             kp = (KeyPair)Marshal.PtrToStructure(key_ptr, typeof(KeyPair));

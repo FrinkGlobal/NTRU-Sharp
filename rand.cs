@@ -131,7 +131,7 @@ namespace NTRU.rand
                 Console.WriteLine("Error: Failed to Initialize RandomContext");
             rand_ctx.rand_ctx = (ffi.CNtruRandContext)Marshal.PtrToStructure(rand_ctx_ptr, typeof(ffi.CNtruRandContext));
             //rand_ctx.rand_ctx.rand_gen = rand_gen_ptr;
-            Console.WriteLine(" Rand Gen: " + rand_ctx.rand_ctx.rand_gen + " Seed Length: " + rand_ctx.rand_ctx.seed_len + " Seed: " + rand_ctx.rand_ctx.seed);
+            //Console.WriteLine(" Rand Gen: " + rand_ctx.rand_ctx.rand_gen + " Seed Length: " + rand_ctx.rand_ctx.seed_len + " Seed: " + rand_ctx.rand_ctx.seed);
             //Marshal.FreeHGlobal(rand_gen_ptr);
             //Marshal.FreeHGlobal(rand_ctx_ptr);
             return rand_ctx;
