@@ -61,7 +61,7 @@ namespace NTRU.types
                 Marshal.Copy(arr, 0, arr_ptr, arr.Length);
                 ffi.ntru_from_arr(arr_ptr, n, q, poly_ptr);
                 p = (IntPoly)Marshal.PtrToStructure(poly_ptr, typeof(IntPoly));
-                //Marshal.FreeHGlobal(poly_ptr);
+                Marshal.FreeHGlobal(poly_ptr);
                 Marshal.FreeHGlobal(arr_ptr);
                 return p;
             }
@@ -83,7 +83,7 @@ namespace NTRU.types
                 Marshal.StructureToPtr(rhs, other_ptr, false);
                 ffi.ntru_add(this_ptr, other_ptr);
                 this = (IntPoly)Marshal.PtrToStructure(this_ptr, typeof(IntPoly));
-                //Marshal.FreeHGlobal(this_ptr);
+                Marshal.FreeHGlobal(this_ptr);
                 Marshal.FreeHGlobal(other_ptr);
             }
 
@@ -94,7 +94,7 @@ namespace NTRU.types
                 Marshal.StructureToPtr(rhs, other_ptr, false);
                 ffi.ntru_sub(this_ptr, other_ptr);
                 this = (IntPoly)Marshal.PtrToStructure(this_ptr, typeof(IntPoly));
-                //Marshal.FreeHGlobal(this_ptr);
+                Marshal.FreeHGlobal(this_ptr);
                 Marshal.FreeHGlobal(other_ptr);
             }
 
@@ -154,6 +154,32 @@ namespace NTRU.types
             public static bool operator != (IntPoly a, IntPoly b) {
                 return !a.Equals(b);
             }
+
+            public override bool Equals (object obj)
+            {
+                
+                IntPoly other = (IntPoly)obj;
+                if (obj == null || GetType() != obj.GetType())
+                {
+                    return false;
+                }
+                
+                if(this.n == other.n)
+                {
+                    for (int i = 0; i < this.coeffs.Length; i++) {
+                        if(this.coeffs[i] != other.coeffs[i])
+                            return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -221,7 +247,7 @@ namespace NTRU.types
                 if (result == 0)
                     Console.WriteLine("Error: Failed to Generate Random TernPoly");
                 poly = (TernPoly)Marshal.PtrToStructure(poly_ptr, typeof(TernPoly));
-                //Marshal.FreeHGlobal(poly_ptr);
+                Marshal.FreeHGlobal(poly_ptr);
                 Marshal.FreeHGlobal(rand_ctx_ptr);
                 return poly;
             }
@@ -247,6 +273,32 @@ namespace NTRU.types
 
             public static bool operator !=(TernPoly a, TernPoly b) {
                 return !a.Equals(b);
+            }
+
+            public override bool Equals (object obj)
+            {
+                
+                TernPoly other = (TernPoly)obj;
+                if (obj == null || GetType() != obj.GetType())
+                {
+                    return false;
+                }
+                
+                if(this.n == other.n && this.num_ones == other.num_ones && this.num_neg_ones == other.num_neg_ones)
+                {
+                    for (int i = 0; i < types.MAX_ONES; i++) {
+                        if(this.ones[i] != other.ones[i])
+                            return false;
+                        if (this.neg_ones[i] != other.neg_ones[i])
+                            return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+                
+                return true;
             }
         }
 
@@ -279,13 +331,7 @@ namespace NTRU.types
                 return new ProdPoly(n, f1, f2, f3);
             }
 
-            public static bool operator ==(ProdPoly a, ProdPoly b) {
-                return a.Equals(b);
-            }
-
-            public static bool operator !=(ProdPoly a, ProdPoly b) {
-                return !a.Equals(b);
-            }
+            
 
         }
 
@@ -308,13 +354,10 @@ namespace NTRU.types
                 return new PrivUnion(this.data);
             }
 
-            public static bool operator ==(PrivUnion a, PrivUnion b) {
-                return a.Equals(b);
-            }
-
-            public static bool operator !=(PrivUnion a, PrivUnion b) {
-                return !a.Equals(b);
-            }
+            // public ProdPoly prod() {
+            //     return (ProdPoly)data;
+            // }
+           
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -345,6 +388,12 @@ namespace NTRU.types
                 return (this.product_flag == 1);
             }
 
+            // public ProdPoly get_poly_product() {
+            //     if(this.product_flag != 1) {
+            //         throw new Exception("Trying to grab a priv poly from a union that's a tern poly");
+            //     }
+            //     return this.poly.prod();
+            // }
 
             public static bool operator ==(PrivPoly a, PrivPoly b) {
                 return a.Equals(b);
@@ -352,6 +401,28 @@ namespace NTRU.types
 
             public static bool operator !=(PrivPoly a, PrivPoly b) {
                 return !a.Equals(b);
+            }
+
+            public override bool Equals (object obj)
+            {
+                
+                PrivPoly other = (PrivPoly)obj;
+                if (obj == null || GetType() != obj.GetType())
+                {
+                    return false;
+                }
+                
+                if(this.product_flag == other.product_flag)
+                {
+                    // if (this.product_flag > 0)
+                    //     this.
+                }
+                else
+                {
+                    return false;
+                }
+                
+                return true;
             }
         }
 
@@ -390,7 +461,7 @@ namespace NTRU.types
                  if (result != 0)
                     Console.WriteLine("Error: Failed to Get Encryption Params from private key");
                 param = (EncParams)Marshal.PtrToStructure(param_ptr, typeof(EncParams));
-                //Marshal.FreeHGlobal(param_ptr);
+                Marshal.FreeHGlobal(param_ptr);
                 Marshal.FreeHGlobal(key_ptr);
                 return param;
             }
@@ -403,8 +474,8 @@ namespace NTRU.types
                 Marshal.Copy(arr, 0, arr_ptr, arr.Length);
                 ffi.ntru_import_priv(arr_ptr, key_ptr);
                 key = (PrivateKey)Marshal.PtrToStructure(key_ptr, typeof(PrivateKey));
-                //Marshal.FreeHGlobal(key_ptr);
-                //Marshal.FreeHGlobal(arr_ptr);
+                Marshal.FreeHGlobal(key_ptr);
+                Marshal.FreeHGlobal(arr_ptr);
                 return key;
             }
 
@@ -461,13 +532,14 @@ namespace NTRU.types
                 Marshal.Copy(arr, 0, arr_ptr, arr.Length);
                 ffi.ntru_import_pub(arr_ptr, key_ptr);
                 key = (PublicKey)Marshal.PtrToStructure(key_ptr, typeof(PublicKey));
-                //Marshal.FreeHGlobal(arr_ptr);
+                Marshal.FreeHGlobal(key_ptr);
+                Marshal.FreeHGlobal(arr_ptr);
                 return key;
             }
 
             public byte[] export(EncParams param) {
                 byte[] arr = new byte[param.public_len()];
-                IntPtr arr_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(arr.Length));
+                IntPtr arr_ptr = Marshal.AllocHGlobal(arr.Length);
                 IntPtr key_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(this));
                 Marshal.StructureToPtr(this, key_ptr, false);
                 ffi.ntru_export_pub(key_ptr, arr_ptr);

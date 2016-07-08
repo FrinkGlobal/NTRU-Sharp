@@ -29,20 +29,29 @@ namespace NTRU
             }
 
             byte[] exportedPriv = kp.get_private().export(EncParamSets.DEFAULT_PARAMS_256_BITS);
+            Console.WriteLine ("Private Key Length: " + EncParamSets.DEFAULT_PARAMS_256_BITS.private_len() + " Byte Array: " + exportedPriv.Length);
+            for (int i = 0; i < exportedPriv.Length; i++) {
+                Console.Write(exportedPriv[i]);
+            }
+            Console.Write("\n");           
             byte[] exportedPub = kp.get_public().export(EncParamSets.DEFAULT_PARAMS_256_BITS);
-            
-            // PublicKey pub = PublicKey.import(exportedPub);
-            // PrivateKey priv = PrivateKey.import(exportedPriv);
+            Console.WriteLine ("PublicKey Key Length: " + EncParamSets.DEFAULT_PARAMS_256_BITS.public_len() + " Byte Array: " + exportedPub.Length);
+            for (int i = 0; i < exportedPub.Length; i++) {
+                Console.Write(exportedPub[i]);
+            }
+            Console.Write("\n");      
+            PublicKey pub = PublicKey.import(exportedPub);
+            PrivateKey priv = PrivateKey.import(exportedPriv);
 
-            // KeyPair newKP = new KeyPair(priv, pub);
+            KeyPair newKP = new KeyPair(priv, pub);
 
-            // if(newKP == kp) {
-            //     Console.WriteLine("Importing  / Exporting Key Test Succeded!");
-            // }
-            // else
-            // {
-            //     Console.WriteLine("Importing  / Exporting Key Test Failed!");
-            // }
+            if(newKP == kp) {
+                Console.WriteLine("Importing  / Exporting Key Test Succeded!");
+            }
+            else
+            {
+                Console.WriteLine("Importing  / Exporting Key Test Failed!");
+            }
             
 
 
