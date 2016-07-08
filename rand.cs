@@ -83,8 +83,8 @@ namespace NTRU.rand
                 Console.WriteLine("Error: Failed to Initialize RandContext");
             
             rand_ctx.rand_ctx = (ffi.CNtruRandContext)Marshal.PtrToStructure(rand_ctx_ptr, typeof(ffi.CNtruRandContext));
-            Marshal.FreeHGlobal(rand_ctx_ptr);
-            Marshal.FreeHGlobal(rand_gen_ptr);
+            //Marshal.FreeHGlobal(rand_ctx_ptr);
+            //Marshal.FreeHGlobal(rand_gen_ptr);
             return rand_ctx;
         }
 
@@ -126,11 +126,13 @@ namespace NTRU.rand
             Marshal.StructureToPtr(rand_ctx.rand_ctx, rand_ctx_ptr, false);
             IntPtr rand_gen_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_gen));
             Marshal.StructureToPtr(rand_gen, rand_gen_ptr, false);
-            var result = ffi.ntru_rand_init (out rand_ctx_ptr, rand_gen_ptr);
+            var result = ffi.ntru_rand_init (rand_ctx_ptr, rand_gen_ptr);
              if (result.ToInt32() != 0)
                 Console.WriteLine("Error: Failed to Initialize RandomContext");
             rand_ctx.rand_ctx = (ffi.CNtruRandContext)Marshal.PtrToStructure(rand_ctx_ptr, typeof(ffi.CNtruRandContext));
-            Marshal.FreeHGlobal(rand_gen_ptr);
+            //rand_ctx.rand_ctx.rand_gen = rand_gen_ptr;
+            Console.WriteLine(" Rand Gen: " + rand_ctx.rand_ctx.rand_gen + " Seed Length: " + rand_ctx.rand_ctx.seed_len + " Seed: " + rand_ctx.rand_ctx.seed);
+            //Marshal.FreeHGlobal(rand_gen_ptr);
             //Marshal.FreeHGlobal(rand_ctx_ptr);
             return rand_ctx;
         }

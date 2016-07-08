@@ -435,11 +435,33 @@ namespace NTRU.types
         }
 
         [StructLayout(LayoutKind.Sequential)]
+        public struct CNtruKeyPair
+        {
+            IntPtr Private;
+
+            IntPtr Public;
+
+            public CNtruKeyPair (IntPtr Private, IntPtr Public) {
+                this.Private = Private;
+                this.Public = Public;
+            }
+
+            public static CNtruKeyPair Default() {
+                IntPtr def_priv_key = Marshal.AllocHGlobal(Marshal.SizeOf(PrivateKey.Default()));
+                Marshal.StructureToPtr(PrivateKey.Default(), def_priv_key, false);
+                IntPtr def_pub_key = Marshal.AllocHGlobal(Marshal.SizeOf(PublicKey.Default()));
+                Marshal.StructureToPtr(PublicKey.Default(), def_pub_key, false);
+                return new CNtruKeyPair(def_priv_key, def_pub_key);
+            }
+        }
+
+
+        [StructLayout(LayoutKind.Sequential)]
         public struct KeyPair {
             
-            PrivateKey Private;
+            public PrivateKey Private;
 
-            PublicKey Public;
+            public PublicKey Public;
 
             public KeyPair (PrivateKey Private, PublicKey Public) {
                 this.Private = Private;

@@ -6,9 +6,9 @@ This wrapper implements an interface with [*libntru*] (https://tbuktu.github.io/
 This wrapper intends to use only Mono 2.0  libraries to make it compatible with with other software packages such as [*Unity3d*] (http://unity3d.com/).
 
 ### TODO
-- [ ] Generate Keypair
-- [ ] Encrypt
-- [ ] Decrypt
+- [x] Generate Keypair
+- [x] Encrypt
+- [x] Decrypt
 - [ ] Documentation
 
 ## Dependencies

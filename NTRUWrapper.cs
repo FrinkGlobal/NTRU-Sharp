@@ -9,7 +9,10 @@ namespace NTRU
     public static class NTRUWrapper {
 
         public static KeyPair generate_key_pair(EncParams param, RandContext rand_context) {
+            Console.WriteLine("Creating Default C# KeyPair");
             KeyPair kp = KeyPair.Default();
+            Console.WriteLine("C# Default KeyPair Created");
+           // CNtruKeyPair ckp = CNtruKeyPair.Default();
             IntPtr key_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(kp));
             Marshal.StructureToPtr(kp, key_ptr, false);
             IntPtr param_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(param));
@@ -17,10 +20,11 @@ namespace NTRU
             IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_context.rand_ctx));
             Marshal.StructureToPtr(rand_context.rand_ctx, rand_ctx_ptr, false);
             var result = ffi.ntru_gen_key_pair(param_ptr, key_ptr, rand_ctx_ptr);
-            if (result != 0)
+            
+            if (result.ToInt32() != 0)
                     Console.WriteLine("Error: Failed to Generate KeyPair");
             kp = (KeyPair)Marshal.PtrToStructure(key_ptr, typeof(KeyPair));
-            //Marshal.FreeHGlobal(key_ptr);
+            Marshal.FreeHGlobal(key_ptr);
             Marshal.FreeHGlobal(param_ptr);
             Marshal.FreeHGlobal(rand_ctx_ptr);
             return kp;
@@ -35,12 +39,13 @@ namespace NTRU
             Marshal.StructureToPtr(pub, pub_ptr, false);
             IntPtr param_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(param));
             Marshal.StructureToPtr(param, param_ptr, false);
-            IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.get_c_rand_ctx()));
-            Marshal.StructureToPtr(rand_ctx.get_c_rand_ctx(), rand_ctx_ptr, false);
+            IntPtr rand_ctx_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(rand_ctx.rand_ctx));
+            Marshal.StructureToPtr(rand_ctx.rand_ctx, rand_ctx_ptr, false);
             IntPtr msg_len_ptr = new IntPtr(msg.Length); 
             var result = ffi.ntru_encrypt(msg_ptr, msg_len_ptr, pub_ptr, param_ptr, rand_ctx_ptr, enc_ptr);
             if (result != 0)
                     Console.WriteLine("Error: Failed to Encrypt Message");
+            Console.WriteLine("Went through FFI Encrypt Function");
             Marshal.Copy(enc_ptr, enc, 0, enc.Length);
             Marshal.FreeHGlobal(msg_ptr);
             Marshal.FreeHGlobal(pub_ptr);

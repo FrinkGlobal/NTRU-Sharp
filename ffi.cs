@@ -35,7 +35,7 @@ namespace NTRU
         }
 
         [DllImport("ntru")]
-        public static extern byte ntru_gen_key_pair (IntPtr param, IntPtr kp, IntPtr rand_ctx);
+        public static extern IntPtr ntru_gen_key_pair (IntPtr param, IntPtr kp, IntPtr rand_ctx);
         [DllImport("ntru")]
         public static extern byte ntru_gen_key_pair_multi (IntPtr param, IntPtr priv, IntPtr pub, IntPtr rand_ctx, uint num_pub);
         [DllImport("ntru")]
@@ -53,7 +53,7 @@ namespace NTRU
         [DllImport("ntru")]
         public static extern void ntru_sha256_4way (IntPtr input, IntPtr input_len, IntPtr digest);
         [DllImport("ntru")]
-        public static extern IntPtr ntru_rand_init (out IntPtr rand_ctx, IntPtr rand_gen);
+        public static extern IntPtr ntru_rand_init (IntPtr rand_ctx, IntPtr rand_gen);
         [DllImport("ntru")]
         public static extern IntPtr ntru_rand_init_det (IntPtr rand_ctx, IntPtr rand_gen, IntPtr seed, IntPtr seed_len);
         [DllImport("ntru")]

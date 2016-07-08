@@ -56,7 +56,7 @@ namespace NTRU.Params
         public byte max_msg_len() { return (byte)(n / 2 * 3 - 1 - db / 8); }
 
         public ushort enc_len() {
-            if(q != 0 && (q-1) != 0)
+            if((q & (q-1)) != 0)
             {
                 return 0;
             }
