@@ -13,7 +13,7 @@ namespace NTRU.Params
         [MarshalAs(UnmanagedType.U2)]
         ushort q;
         [MarshalAs(UnmanagedType.U1)]
-        byte product_flag;
+        byte prod_flag;
         [MarshalAs(UnmanagedType.U2)]
         ushort df1;
         [MarshalAs(UnmanagedType.U2)]
@@ -78,7 +78,7 @@ namespace NTRU.Params
         public ushort public_len() {  return (ushort)(4 + this.enc_len()); }
 
         public ushort private_len() {
-            if(this.product_flag == 1) {
+            if(this.prod_flag == 1) {
                return (ushort) (5 + 5 + 4 * this.df1 + 4 + 4 * this.df2 + 4 + 4 * this.df3); 
             }
             else
@@ -87,11 +87,11 @@ namespace NTRU.Params
             }
         }
 
-        public EncParams (byte[] name, ushort n, ushort q, byte product_flag, ushort df1, ushort df2, ushort df3, ushort dg, ushort dm0, ushort db, ushort c, ushort min_calls_r, ushort min_calls_mask, byte hash_seed, byte[] oid, Action<IntPtr, IntPtr, IntPtr> hash, Action<IntPtr, IntPtr, IntPtr> hash_4way, ushort hlen, ushort pklen) {
+        public EncParams (byte[] name, ushort n, ushort q, byte prod_flag, ushort df1, ushort df2, ushort df3, ushort dg, ushort dm0, ushort db, ushort c, ushort min_calls_r, ushort min_calls_mask, byte hash_seed, byte[] oid, Action<IntPtr, IntPtr, IntPtr> hash, Action<IntPtr, IntPtr, IntPtr> hash_4way, ushort hlen, ushort pklen) {
             this.name = name;
             this.n = n;
             this.q = q;
-            this.product_flag = product_flag;
+            this.prod_flag = prod_flag;
             this.df1 = df1;
             this.df2 = df2;
             this.df3 = df3;
