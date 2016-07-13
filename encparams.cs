@@ -53,16 +53,16 @@ namespace NTRU.Params
 
         public ushort get_db() { return db; }
 
-        public byte max_msg_len() { return (byte)(n / 2 * 3 - 1 - db / 8); }
+        public byte max_msg_len() { return (byte)(this.n / 2 * 3 - 1 - this.db / 8); }
 
         public ushort enc_len() {
-            if((q & (q-1)) != 0)
+            if((this.q & (this.q-1)) != 0)
             {
                 return 0;
             }
             else
             {         
-                ushort _q = q;
+                ushort _q = this.q;
                 ushort log = 0;
                 while (_q > 1)
                 {
@@ -79,7 +79,7 @@ namespace NTRU.Params
 
         public ushort private_len() {
             if(this.prod_flag == 1) {
-               return (ushort) (5 + 5 + 4 * this.df1 + 4 + 4 * this.df2 + 4 + 4 * this.df3); 
+               return (ushort) (5 + 4 + 4 * this.df1 + 4 + 4 * this.df2 + 4 + 4 * this.df3); 
             }
             else
             {

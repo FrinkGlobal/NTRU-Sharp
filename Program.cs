@@ -29,15 +29,15 @@ namespace NTRU
             }
 
             byte[] exportedPriv = kp.get_private().export(EncParamSets.DEFAULT_PARAMS_256_BITS);
-            Console.WriteLine ("Private Key Length: " + EncParamSets.DEFAULT_PARAMS_256_BITS.private_len() + " Byte Array: " + exportedPriv.Length);
-            Console.WriteLine ("ACTUAL PRIVATE KEY LENGTH: " + exportedPriv.Length);
+            Console.WriteLine ("ENC PARAMS Private Key Length: " + EncParamSets.DEFAULT_PARAMS_256_BITS.private_len() + " Byte Array: " + exportedPriv.Length);
+           
             for (int i = 0; i < exportedPriv.Length; i++) {
                 Console.Write(exportedPriv[i]);
             }
             Console.Write("\n");           
             byte[] exportedPub = kp.get_public().export(EncParamSets.DEFAULT_PARAMS_256_BITS);
-            Console.WriteLine ("PublicKey Key Length: " + EncParamSets.DEFAULT_PARAMS_256_BITS.public_len() + " Byte Array: " + exportedPub.Length);
-            Console.WriteLine ("ACTUAL PUBLIC KEY LENGTH: " + exportedPub.Length);
+            Console.WriteLine ("ENC PARAMS PublicKey Key Length: " + EncParamSets.DEFAULT_PARAMS_256_BITS.public_len() + " Byte Array: " + exportedPub.Length);
+            
             for (int i = 0; i < exportedPub.Length; i++) {
                 Console.Write(exportedPub[i]);
             }         
